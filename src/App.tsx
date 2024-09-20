@@ -27,8 +27,10 @@ export default function ChatGPTUI() {
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([
     { role: "assistant", content: "¡Hola! ¿En qué puedo ayudarte hoy?" },
   ]);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [imageURL, setImageURL] = useState<string | null>(null);
   const [input, setInput] = useState("");
-  const { generateChat } = useGenerateChat();
+  const { generateChat, generateChatVisio } = useGenerateChat();
 
   useEffect(() => {
     if (darkMode) {
@@ -54,8 +56,14 @@ export default function ChatGPTUI() {
     const files = event.target.files;
     if (files && files[0]) {
       const file = files[0];
-      // Aquí iría la lógica para manejar el archivo subido
-      console.log("Archivo seleccionado:", file.name);
+      setUploadedFile(file);
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const url = e.target?.result as string;
+        setImageURL(url);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -149,6 +157,19 @@ export default function ChatGPTUI() {
               </span>
             </div>
           ))}
+          {uploadedFile && (
+            <div className="mb-4 text-right">
+              <span className="inline-block p-2 rounded-lg bg-blue-500 text-white">
+                {imageURL && (
+                  <img
+                    src={imageURL}
+                    alt="Archivo adjunto"
+                    className="max-w-full h-auto rounded-lg"
+                  />
+                )}
+              </span>
+            </div>
+          )}
         </ScrollArea>
         <div className="p-4 border-t dark:border-gray-700">
           <div className="flex space-x-2">
