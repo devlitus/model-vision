@@ -1,13 +1,6 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import {
-  Moon,
-  Sun,
-  Send,
-  Plus,
-  MessageSquare,
-  ChevronLeft,
-  ChevronRight,
-  Paperclip,
+  Send, Paperclip
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,12 +13,14 @@ import {
 } from "@/components/ui/tooltip";
 import { useGenerateChat } from "./hooks/useGenerateChat";
 import { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions.mjs";
+import { SideBar } from "./components/ui/SideBar";
+import { Header } from "./components/ui/Header";
 
 export default function ChatGPTUI() {
   const [darkMode, setDarkMode] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([
-    { role: "assistant", content: "¡Hola! ¿En qué puedo ayudarte hoy?" },
+    { role: "system", content: "¡Hola! ¿En qué puedo ayudarte hoy?" },
   ]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [imageURL, setImageURL] = useState<string | null>(null);
@@ -46,9 +41,16 @@ export default function ChatGPTUI() {
       const updatedMessages = [...messages, newMessage];
       setMessages(updatedMessages);
       setInput("");
-      console.log("Mensaje enviado:", updatedMessages);
-      const assistantMessage = await generateChat(updatedMessages);
-      setMessages([...updatedMessages, assistantMessage]);
+
+      if (uploadedFile && imageURL) {
+        const assistantMessage = await generateChatVisio(input, imageURL);
+        console.log("Mensaje enviado:", assistantMessage);
+        setMessages([...updatedMessages, assistantMessage]);
+        setImageURL(null);
+      } else {
+        const assistantMessage = await generateChat(updatedMessages);
+        setMessages([...updatedMessages, assistantMessage]);
+      }
     }
   };
 
@@ -70,74 +72,11 @@ export default function ChatGPTUI() {
   return (
     <div className="flex h-screen bg-white dark:bg-gray-800 transition-colors duration-200">
       {/* Sidebar */}
-      <aside
-        className={`bg-gray-100 dark:bg-gray-900 p-4 transition-all duration-300 ${
-          sidebarOpen ? "w-64" : "w-0 overflow-hidden"
-        } md:relative fixed h-full z-10`}
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-            Chats
-          </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(false)}
-            className="md:hidden"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-        </div>
-        <Button variant="outline" className="w-full mb-4">
-          <Plus className="h-4 w-4 mr-2" /> Nuevo chat
-        </Button>
-        <div className="space-y-2">
-          {["Chat 1", "Chat 2", "Chat 3"].map((chat, index) => (
-            <Button
-              key={index}
-              variant="ghost"
-              className="w-full justify-start"
-            >
-              <MessageSquare className="h-4 w-4 mr-2" /> {chat}
-            </Button>
-          ))}
-        </div>
-      </aside>
+      <SideBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {/* Main content */}
       <div className="flex flex-col flex-grow">
-        <header className="flex justify-between items-center p-4 border-b dark:border-gray-700">
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="mr-2"
-              aria-label={sidebarOpen ? "Cerrar sidebar" : "Abrir sidebar"}
-            >
-              {sidebarOpen ? (
-                <ChevronLeft className="h-5 w-5" />
-              ) : (
-                <ChevronRight className="h-5 w-5" />
-              )}
-            </Button>
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-              ChatGPT UI
-            </h1>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setDarkMode(!darkMode)}
-            aria-label={darkMode ? "Activar modo claro" : "Activar modo oscuro"}
-          >
-            {darkMode ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-          </Button>
-        </header>
+        <Header sidebarOpen={sidebarOpen} darkMode={darkMode} setSidebarOpen={setSidebarOpen} setDarkMode={setDarkMode} />
         <ScrollArea className="flex-grow p-4">
           {messages.map((message, index) => (
             <div
@@ -157,21 +96,21 @@ export default function ChatGPTUI() {
               </span>
             </div>
           ))}
-          {uploadedFile && (
-            <div className="mb-4 text-right">
-              <span className="inline-block p-2 rounded-lg bg-blue-500 text-white">
+        </ScrollArea>
+        <div className="p-4 border-t dark:border-gray-700">
+        {uploadedFile && (
+            <div className="mb-4 text-left ml-14">
+              <span className="inline-block  text-white">
                 {imageURL && (
                   <img
                     src={imageURL}
                     alt="Archivo adjunto"
-                    className="max-w-full h-auto rounded-lg"
+                    className="w-14 h-14 object-cover rounded-lg"
                   />
                 )}
               </span>
             </div>
           )}
-        </ScrollArea>
-        <div className="p-4 border-t dark:border-gray-700">
           <div className="flex space-x-2">
             <TooltipProvider>
               <Tooltip>
