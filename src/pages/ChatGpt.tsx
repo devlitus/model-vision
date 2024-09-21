@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send } from "lucide-react";
+import { SideBar } from "@/components/ui/sidebar";
 import { Header } from "@/components/ui/header";
-import { SideBar } from "@/components/ui/sideBar";
 import { useGenerateChat } from "@/hooks/useGenerateChat";
 import { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions.mjs";
+
 
 
 export function ChatGpt() {
