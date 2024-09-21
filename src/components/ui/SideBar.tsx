@@ -10,7 +10,7 @@ export function SideBar({ sidebarOpen, setSidebarOpen }: SideBarProps) {
 
   return (
     <aside
-      className={`bg-gray-100 dark:bg-gray-900 p-4 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-0 overflow-hidden px-0"
+      className={`bg-gray-100 dark:bg-gray-900 p-4 transition-all duration-300 ${sidebarOpen ? "w-64 min-w-64" : "w-0 min-w-0 overflow-hidden px-0"
         } md:relative fixed h-full z-100`}
     >
       <div className="flex justify-between items-center mb-4">
