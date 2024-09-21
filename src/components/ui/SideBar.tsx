@@ -7,7 +7,7 @@ interface SideBarProps {
 }
 
 export function SideBar({ sidebarOpen, setSidebarOpen }: SideBarProps) {
-
+  const handleToggleSidebar = () => { }
   return (
     <aside
       className={`bg-gray-100 dark:bg-gray-900 p-4 transition-all duration-300 ${sidebarOpen ? "w-64 min-w-64" : "w-0 min-w-0 overflow-hidden px-0"

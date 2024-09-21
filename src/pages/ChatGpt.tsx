@@ -8,6 +8,7 @@ import { SideBar } from "@/components/ui/sideBar";
 import { useGenerateChat } from "@/hooks/useGenerateChat";
 import { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions.mjs";
 
+
 export function ChatGpt() {
   const [darkMode, setDarkMode] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
