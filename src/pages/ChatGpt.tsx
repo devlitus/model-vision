@@ -19,7 +19,7 @@ export function ChatGpt() {
   // Disbled for now
   // const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   // const [imageURL, setImageURL] = useState<string | null>(null);
-  // const { generateChat, generateChatVisio } = useGenerateChat();
+  // const { generateChat, generateChatVision } = useGenerateChat();
 
   const [input, setInput] = useState("");
   const { generateChat } = useGenerateChat();
@@ -61,7 +61,7 @@ export function ChatGpt() {
       {/* Main content */}
       <div className="flex flex-col flex-grow">
         <Header sidebarOpen={sidebarOpen} darkMode={darkMode} setSidebarOpen={setSidebarOpen} setDarkMode={setDarkMode} />
-        <ScrollArea className="flex-grow p-4 w-[80%] m-auto">
+        <ScrollArea className="flex-grow p-4 max-w-[800px] mx-auto w-full">
           {messages.map((message, index) => (
             <div
               key={index}
@@ -79,7 +79,7 @@ export function ChatGpt() {
             </div>
           ))}
         </ScrollArea>
-        <div className="p-4 border-t dark:border-gray-700">
+        <div className="p-4 dark:border-gray-700 max-w-[800px] mx-auto w-full" >
           {/* {uploadedFile && (
             <div className="mb-4 text-left ml-14">
               <span className="inline-block  text-white">
