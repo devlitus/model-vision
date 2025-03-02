@@ -15,9 +15,16 @@ interface UIState {
 interface ChatState {
   messages: ChatCompletionMessageParam[];
   input: string;
+  // Nuevos campos para gestionar imágenes
+  imageUrl: string;
+  uploadedFile: File | null;
+  // Métodos
   setInput: (input: string) => void;
   addMessage: (message: ChatCompletionMessageParam) => void;
   resetInput: () => void;
+  setImageUrl: (url: string) => void;
+  setUploadedFile: (file: File | null) => void;
+  resetImage: () => void;
 }
 
 // Store para la UI
@@ -36,8 +43,16 @@ export const useChatStore = create<ChatState>((set) => ({
     { role: "system", content: "¡Hola! ¿En qué puedo ayudarte hoy?" },
   ],
   input: "",
+  // Inicializamos los nuevos campos
+  imageUrl: "",
+  uploadedFile: null,
+  // Métodos existentes
   setInput: (input) => set({ input }),
   addMessage: (message) => 
     set((state) => ({ messages: [...state.messages, message] })),
   resetInput: () => set({ input: "" }),
+  // Nuevos métodos para gestionar imágenes
+  setImageUrl: (url) => set({ imageUrl: url }),
+  setUploadedFile: (file) => set({ uploadedFile: file }),
+  resetImage: () => set({ imageUrl: "", uploadedFile: null })
 }));

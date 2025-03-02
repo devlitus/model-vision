@@ -1,5 +1,6 @@
 import { useChatStore } from "./store";
 import { useGenerateChat } from "@/hooks/useGenerateChat";
+import { useGenerateVision } from "@/hooks/useGenerateVision";
 import { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions.mjs";
 
 // Hook que encapsula la lógica de operaciones del chat
@@ -9,17 +10,43 @@ export function useChatOperations() {
     input, 
     setInput, 
     addMessage, 
-    resetInput 
+    resetInput,
+    imageUrl,
+    setImageUrl,
+    uploadedFile,
+    setUploadedFile,
+    resetImage
   } = useChatStore();
   
   const { generateChat } = useGenerateChat();
+  const { generateChatVision } = useGenerateVision();
 
   const sendMessage = async () => {
     if (input.trim()) {
-      const newMessage: ChatCompletionMessageParam = { 
-        role: "user", 
-        content: input 
-      };
+      let newMessage: ChatCompletionMessageParam;
+      
+      // Si hay una imagen, creamos un mensaje con contenido de tipo array
+      if (imageUrl) {
+        newMessage = {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: input
+            },
+            {
+              type: "image_url",
+              image_url: { url: imageUrl }
+            }
+          ]
+        };
+      } else {
+        // Mensaje normal sin imagen
+        newMessage = { 
+          role: "user", 
+          content: input 
+        };
+      }
       
       // Agregar mensaje del usuario
       addMessage(newMessage);
@@ -28,19 +55,31 @@ export function useChatOperations() {
       resetInput();
       
       try {
-        // Obtener la respuesta del asistente
-        const assistantMessage = await generateChat([...messages, newMessage]);
+        let assistantMessage;
+        
+        // Usar el generador de visión si hay una imagen, o el chat normal si no
+        if (imageUrl && uploadedFile) {
+          assistantMessage = await generateChatVision(input, imageUrl);
+        } else {
+          assistantMessage = await generateChat([...messages, newMessage]);
+        }
         
         // Agregar la respuesta del asistente
         addMessage(assistantMessage);
+        
+        // Limpiar la imagen después de enviar el mensaje
+        resetImage();
       } catch (error) {
         console.error("Error al generar respuesta:", error);
         
-        // Podríamos agregar un mensaje de error al chat
+        // Mensaje de error al chat
         addMessage({ 
           role: "assistant", 
           content: "Lo siento, ha ocurrido un error al procesar tu mensaje. Por favor, intenta de nuevo." 
         });
+        
+        // Limpiar la imagen en caso de error
+        resetImage();
       }
     }
   };
@@ -49,6 +88,10 @@ export function useChatOperations() {
     messages,
     input,
     setInput,
-    sendMessage
+    sendMessage,
+    imageUrl,
+    setImageUrl,
+    uploadedFile,
+    setUploadedFile
   };
 }

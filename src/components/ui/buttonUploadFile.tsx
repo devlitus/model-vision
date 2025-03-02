@@ -14,13 +14,23 @@ interface ButtonUploadFileProps {
 }
 
 export function ButtonUploadFile({ setUploadedFile, setImageURL }: ButtonUploadFileProps) {
-
   const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files[0]) {
       const file = files[0];
+      
+      // Comprobar si el archivo es una imagen válida
+      const isValidType = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.type);
+      if (!isValidType) {
+        alert("Solo se permiten imágenes con formato JPG, JPEG o PNG");
+        // Resetear el input
+        event.target.value = '';
+        return;
+      }
+      
       setUploadedFile(file);
-
+      
+      // Leer y mostrar la imagen
       const reader = new FileReader();
       reader.onload = (e) => {
         const url = e.target?.result as string;
@@ -40,15 +50,16 @@ export function ButtonUploadFile({ setUploadedFile, setImageURL }: ButtonUploadF
               <input
                 id="file-upload"
                 type="file"
+                accept=".jpg,.jpeg,.png"
                 className="hidden"
                 onChange={handleFileUpload}
-                aria-label="Subir archivo"
+                aria-label="Subir imagen"
               />
             </label>
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Subir archivo</p>
+          <p>Subir imagen (JPG, JPEG, PNG)</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
