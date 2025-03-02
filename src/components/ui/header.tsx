@@ -1,21 +1,17 @@
 import { ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react";
 import { Button } from "./button";
+import { useUIStore } from "@/store/store";
 
-interface HeaderProps {
-  sidebarOpen: boolean;
-  darkMode: boolean;
-  setSidebarOpen: (open: boolean) => void;
-  setDarkMode: (dark: boolean) => void;
-}
+export function Header() {
+  const { sidebarOpen, darkMode, toggleSidebar, toggleDarkMode } = useUIStore();
 
-export function Header({ sidebarOpen, darkMode, setSidebarOpen, setDarkMode }: HeaderProps) {
   return (
     <header className="flex justify-between items-center p-4 border-b dark:border-gray-700">
       <div className="flex items-center">
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
+          onClick={toggleSidebar}
           className="mr-2"
           aria-label={sidebarOpen ? "Cerrar sidebar" : "Abrir sidebar"}
         >
@@ -32,7 +28,7 @@ export function Header({ sidebarOpen, darkMode, setSidebarOpen, setDarkMode }: H
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => setDarkMode(!darkMode)}
+        onClick={toggleDarkMode}
         aria-label={darkMode ? "Activar modo claro" : "Activar modo oscuro"}
       >
         {darkMode ? (

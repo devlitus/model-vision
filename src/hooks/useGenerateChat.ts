@@ -14,28 +14,6 @@ export function useGenerateChat() {
     })
     return chatCompletion.choices[0].message
   }
-  async function generateChatVision(message: string, image: any) {
-    console.log("message", message);
-    const chatCompletion = await client.chat.completions.create({
-      model: modelVisio,
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `${message}, respon siempre en español`
-            },
-            {
-              type: "image_url",
-              image_url: { url: image }
-            }
-          ]
-        }
-      ]
-    });
-    // console.log("generateChatVisio", chatCompletion.choices[0].message);
-    return chatCompletion.choices[0].message;
-  }
-  return { generateChat, generateChatVision };
+  
+  return { generateChat };
 }

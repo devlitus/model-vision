@@ -1,29 +1,21 @@
-import { useEffect, useState, } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send } from "lucide-react";
 import { SideBar } from "@/components/ui/sidebar";
 import { Header } from "@/components/ui/header";
-import { useGenerateChat } from "@/hooks/useGenerateChat";
-import { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions.mjs";
-
-
+import { useUIStore } from "@/store/store";
+import { useChatOperations } from "@/store/chatOperations";
 
 export function ChatGpt() {
-  const [darkMode, setDarkMode] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([
-    { role: "system", content: "¡Hola! ¿En qué puedo ayudarte hoy?" },
-  ]);
-  // Disbled for now
-  // const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  // const [imageURL, setImageURL] = useState<string | null>(null);
-  // const { generateChat, generateChatVision } = useGenerateChat();
+  // Usar Zustand para la UI
+  const { darkMode, sidebarOpen, setSidebarOpen } = useUIStore();
+  
+  // Usar el hook personalizado para las operaciones de chat
+  const { messages, input, setInput, sendMessage } = useChatOperations();
 
-  const [input, setInput] = useState("");
-  const { generateChat } = useGenerateChat();
-
+  // Efecto para aplicar el tema oscuro
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -32,27 +24,6 @@ export function ChatGpt() {
     }
   }, [darkMode]);
 
-  const handleSend = async () => {
-    if (input.trim()) {
-      const newMessage: ChatCompletionMessageParam = { role: "user", content: input };
-      const updatedMessages = [...messages, newMessage];
-      setMessages(updatedMessages);
-      setInput("");
-      // Disbled for now
-      // if (uploadedFile && imageURL) {
-      //   const assistantMessage = await generateChatVisio(input, imageURL);
-      //   console.log("Mensaje enviado:", assistantMessage);
-      //   setMessages([...updatedMessages, assistantMessage]);
-      //   setImageURL(null);
-      // } else {
-      //   const assistantMessage = await generateChat(updatedMessages);
-      //   setMessages([...updatedMessages, assistantMessage]);
-      // }
-      const assistantMessage = await generateChat(updatedMessages);
-      setMessages([...updatedMessages, assistantMessage]);
-    }
-  };
-
   return (
     <div className="flex h-screen bg-white dark:bg-gray-800 transition-colors duration-200">
       {/* Sidebar */}
@@ -60,7 +31,7 @@ export function ChatGpt() {
 
       {/* Main content */}
       <div className="flex flex-col flex-grow">
-        <Header sidebarOpen={sidebarOpen} darkMode={darkMode} setSidebarOpen={setSidebarOpen} setDarkMode={setDarkMode} />
+        <Header />
         <ScrollArea className="flex-grow p-4 max-w-[800px] mx-auto w-full">
           {messages.map((message, index) => (
             <div
@@ -80,29 +51,16 @@ export function ChatGpt() {
           ))}
         </ScrollArea>
         <div className="p-4 dark:border-gray-700 max-w-[800px] mx-auto w-full" >
-          {/* {uploadedFile && (
-            <div className="mb-4 text-left ml-14">
-              <span className="inline-block  text-white">
-                {imageURL && (
-                  <img
-                    src={imageURL}
-                    alt="Archivo adjunto"
-                    className="w-14 h-14 object-cover rounded-lg"
-                  />
-                )}
-              </span>
-            </div>
-          )} */}
           <div className="flex space-x-2">
             <Input
               type="text"
               placeholder="Escribe un mensaje..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
               className="flex-grow"
             />
-            <Button onClick={handleSend} aria-label="Enviar mensaje">
+            <Button onClick={sendMessage} aria-label="Enviar mensaje">
               <Send className="h-4 w-4" />
             </Button>
           </div>

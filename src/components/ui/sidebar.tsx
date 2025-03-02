@@ -1,12 +1,10 @@
 import { ChevronLeft, MessageSquare, Plus } from "lucide-react";
 import { Button } from "./button";
+import { useUIStore } from "@/store/store";
 
-interface SideBarProps {
-  sidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
-}
-
-export function SideBar({ sidebarOpen, setSidebarOpen }: SideBarProps) {
+export function SideBar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: boolean, setSidebarOpen: (open: boolean) => void }) {
+  // También podríamos tomar estos valores directamente del store
+  // const { sidebarOpen, setSidebarOpen } = useUIStore();
 
   return (
     <aside
