@@ -1,6 +1,10 @@
-const modelVisio = "llama-3.2-90b-vision-preview";
+import Groq from 'groq-sdk';
 
 export const useGenerateVision = () => {
+  const apiKey = import.meta.env.VITE_API_KEY;
+  const client = new Groq({ apiKey, dangerouslyAllowBrowser: true });
+  const modelVisio = "llama-3.2-90b-vision-preview";
+
   async function generateChatVision(message: string, imageUrl: string) {
     console.log('imageUrl received in generateChatVision :>> ', imageUrl);
     const chatCompletion = await client.chat.completions.create({
