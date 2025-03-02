@@ -37,5 +37,5 @@ export function useGenerateChat() {
     // console.log("generateChatVisio", chatCompletion.choices[0].message);
     return chatCompletion.choices[0].message;
   }
-  return { generateChat, generateChatVisio: generateChatVision };
+  return { generateChat, generateChatVision };
 }
