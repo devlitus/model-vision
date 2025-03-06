@@ -8,8 +8,9 @@ export function SideBar() {
 
   return (
     <aside
-      className={`bg-gray-100 dark:bg-gray-900 p-4 transition-all duration-300 ${sidebarOpen ? "w-64 min-w-64" : "w-0 min-w-0 overflow-hidden px-0"
-        } md:relative fixed h-full z-100`}
+      className={`bg-gray-100 dark:bg-gray-900 p-4 transition-all duration-300 ${
+        sidebarOpen ? "w-64 min-w-64" : "w-0 min-w-0 overflow-hidden px-0"
+      } md:relative fixed h-full z-100`}
     >
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-gray-800 dark:text-white">
@@ -29,15 +30,11 @@ export function SideBar() {
       </Button>
       <div className="space-y-2">
         {["Chat 1", "Chat 2", "Chat 3"].map((chat, index) => (
-          <Button
-            key={index}
-            variant="ghost"
-            className="w-full justify-start"
-          >
+          <Button key={index} variant="ghost" className="w-full justify-start">
             <MessageSquare className="h-4 w-4 mr-2" /> {chat}
           </Button>
         ))}
       </div>
     </aside>
-  )
+  );
 }

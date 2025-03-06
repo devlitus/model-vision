@@ -5,24 +5,20 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, X } from "lucide-react";
 import { SideBar } from "@/components/ui/sidebar";
 import { Header } from "@/components/ui/header";
-import { useUIStore } from "@/store/store";
 import { useChatOperations } from "@/store/chatOperations";
 import { ButtonUploadFile } from "@/components/ui/buttonUploadFile";
+import { useUIStore } from "@/store/store";
 
 export function ChatGpt() {
-  // Usar Zustand para la UI
-  const { darkMode, sidebarOpen, setSidebarOpen } = useUIStore();
-  
-  // Usar el hook personalizado para las operaciones de chat
-  const { 
-    messages, 
-    input, 
-    setInput, 
-    sendMessage, 
-    imageUrl, 
-    setImageUrl, 
-    uploadedFile, 
-    setUploadedFile 
+  const { darkMode } = useUIStore();
+  const {
+    messages,
+    input,
+    setInput,
+    sendMessage,
+    imageUrl,
+    setImageUrl,
+    setUploadedFile,
   } = useChatOperations();
 
   // Efecto para aplicar el tema oscuro
@@ -36,9 +32,9 @@ export function ChatGpt() {
 
   // Función para validar si es una imagen válida
   const isValidImageFile = (file: File): boolean => {
-    const validExtensions = ['.jpg', '.jpeg', '.png'];
+    const validExtensions = [".jpg", ".jpeg", ".png"];
     const fileName = file.name.toLowerCase();
-    return validExtensions.some(ext => fileName.endsWith(ext));
+    return validExtensions.some((ext) => fileName.endsWith(ext));
   };
 
   // Handler para cuando se selecciona un archivo
@@ -65,7 +61,7 @@ export function ChatGpt() {
   return (
     <div className="flex h-screen bg-white dark:bg-gray-800 transition-colors duration-200">
       {/* Sidebar */}
-      <SideBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <SideBar />
 
       {/* Main content */}
       <div className="flex flex-col flex-grow">
@@ -74,7 +70,9 @@ export function ChatGpt() {
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`mb-4 ${message.role === "user" ? "text-right" : "text-left"}`}
+              className={`mb-4 ${
+                message.role === "user" ? "text-right" : "text-left"
+              }`}
             >
               <span
                 className={`inline-block p-2 rounded-lg ${
@@ -84,26 +82,33 @@ export function ChatGpt() {
                 }`}
               >
                 {/* Manejo de mensaje con imagen */}
-                {Array.isArray(message.content) 
+                {Array.isArray(message.content)
                   ? message.content
-                      .filter(item => item.type === "text")
-                      .map((item, i) => (
-                        <span key={i}>{(item as any).text}</span>
+                      .filter((item) => item.type === "text")
+                      .map((item: { type: string; text: string }, i) => (
+                        <span key={i}>{item.text}</span>
                       ))
                   : message.content}
               </span>
-              
+
               {/* Si el mensaje del usuario tiene una imagen, mostrarla */}
-              {message.role === "user" && Array.isArray(message.content) && 
-                message.content.some(item => item.type === "image_url") && (
-                <div className="mt-2 flex justify-end">
-                  <img 
-                    src={(message.content.find(item => item.type === "image_url") as any)?.image_url?.url}
-                    alt="Imagen adjunta" 
-                    className="max-w-xs h-auto rounded-lg" 
-                  />
-                </div>
-              )}
+              {message.role === "user" &&
+                Array.isArray(message.content) &&
+                message.content.some((item) => item.type === "image_url") && (
+                  <div className="mt-2 flex justify-end">
+                    <img
+                      src={
+                        (
+                          message.content.find(
+                            (item) => item.type === "image_url"
+                          ) as { type: string; image_url: { url: string } }
+                        )?.image_url?.url
+                      }
+                      alt="Imagen adjunta"
+                      className="max-w-xs h-auto rounded-lg"
+                    />
+                  </div>
+                )}
             </div>
           ))}
         </ScrollArea>
@@ -130,8 +135,8 @@ export function ChatGpt() {
 
         <div className="p-4 dark:border-gray-700 max-w-[800px] mx-auto w-full">
           <div className="flex space-x-2">
-            <ButtonUploadFile 
-              setUploadedFile={handleFileUpload} 
+            <ButtonUploadFile
+              setUploadedFile={handleFileUpload}
               setImageURL={setImageUrl}
             />
             <Input
@@ -139,7 +144,9 @@ export function ChatGpt() {
               placeholder="Escribe un mensaje..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+              onKeyDown={(e) =>
+                e.key === "Enter" && !e.shiftKey && sendMessage()
+              }
               className="flex-grow"
             />
             <Button onClick={sendMessage} aria-label="Enviar mensaje">
